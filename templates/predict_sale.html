@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Demand Prediction Form</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #74b9ff, #a29bfe);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+        }
+
+        nav {
+            background: rgba(9, 1, 39, 0.772);
+            color: #fff;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        nav div {
+            font-size: 1.7rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        nav ul li a:hover {
+            background-color: #57606f;
+            transform: scale(1.05);
+        }
+
+        h1 {
+            text-align: center;
+            margin: 25px 0;
+            color: #fff;
+            font-size: 2.2rem;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+        }
+
+        form {
+            backdrop-filter: blur(10px);
+            background: rgba(9, 1, 39, 0.772);
+            max-width: 450px;
+            margin: 0 auto;
+            padding: 35px 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        form input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            color: #000;
+            backdrop-filter: blur(5px);
+            transition: border-color 0.3s;
+        }
+
+        form input:focus {
+            border-color: #0984e3;
+            outline: none;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #0984e3, #6c5ce7);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        button:hover {
+            background: linear-gradient(45deg, #74b9ff, #a29bfe);
+            transform: translateY(-2px);
+        }
+
+        #result {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+            background-color: rgba(255,255,255,0.2);
+            padding: 12px;
+            border-radius: 8px;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            nav ul {
+                flex-direction: column;
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            nav ul li {
+                margin: 8px 0;
+            }
+
+            form {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div>Walmart Sales</div>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/graphs">Visualizations</a></li>
+            <li><a href="/add-data">Add Data</a></li>
+            <li><a href="/train-model">Train Model</a></li>
+            <li><a href="/predict">Predict Sales</a></li>
+        </ul>
+    </nav>
+
+    <h1>Weekly Sales Prediction</h1>
+
+    <form id="predictForm" action="/predict" method="post">
+
+        <label for="holiday">Holiday Flag (0 or 1)</label>
+        <input type="number" id="holiday" name="holiday_flag"
+               value="{{ input_data['holiday_flag'] if 'holiday_flag' in input_data else '' }}"
+               min="0" max="1" step="1" required>
+
+        <label for="temp">Temperature (°F)</label>
+        <input type="number" id="temp" name="temperature"
+               value="{{ input_data['temperature'] if 'temperature' in input_data else '' }}"
+               step="0.1" required>
+
+        <label for="fuel">Fuel Price ($)</label>
+        <input type="number" id="fuel" name="fuel_price"
+               value="{{ input_data['fuel_price'] if 'fuel_price' in input_data else '' }}"
+               step="0.01" required>
+
+        <label for="cpi">CPI</label>
+        <input type="number" id="cpi" name="cpi"
+               value="{{ input_data['cpi'] if 'cpi' in input_data else '' }}"
+               step="0.01" required>
+
+        <label for="unemp">Unemployment Rate (%)</label>
+        <input type="number" id="unemp" name="unemployment"
+               value="{{ input_data['unemployment'] if 'unemployment' in input_data else '' }}"
+               step="0.01" required>
+
+        <button type="submit">Predict Weekly Sales</button>
+
+        <div id="result">
+            <label>Predicted Weekly Sales:</label>
+            <span id="predictedSales">{{ prediction }}</span>
+        </div>
+    </form>
+
+</body>
+</html>
